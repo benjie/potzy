@@ -6,13 +6,39 @@ t = 0
 volume = 0.1
 bufferSize = 4096
 
+premade = [
+  "afternoon walk"
+  "early morning"
+  "got some 303"
+  "icecream"
+  "late morning"
+  "mind swift"
+  "morning"
+  "need more 303"
+  "on the verge"
+  "on the verge tech mix"
+  "polytropon"
+  "polytropon astral mix"
+  "simple sine"
+  "subwah"
+  "unexpected token"
+  "yay"
+]
+
 $ = (id) ->
   document.getElementById(id)
 
 window.potzy = potzy = new class
   constructor: ->
     @readyCallbacks = []
+
   init: =>
+    fp = $("file-picker")
+    for file in premade then do (file) =>
+      div = document.createElement "div"
+      div.textContent = file
+      div.onclick = => @load(file)
+      fp.appendChild div
     $("play").addEventListener 'click', @play, false
     $("pause").addEventListener 'click', @pause, false
     @editor = CodeMirror document.getElementById("editor"),
@@ -44,6 +70,15 @@ window.potzy = potzy = new class
     catch e
       @ready = false
       alert 'Web Audio API is not supported in this browser'
+
+  load: (file) ->
+    xhr = new XMLHttpRequest
+    xhr.onreadystatechange = =>
+      if xhr.readyState is 4
+        @editor.setValue(xhr.responseText)
+        @import()
+    xhr.open 'GET', "premade/#{file}", true
+    xhr.send null
 
   import: =>
     js = @editor.getValue()
