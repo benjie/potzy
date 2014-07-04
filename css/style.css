@@ -1,0 +1,26 @@
+#buttons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: #ccc;
+}
+#editor {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 200px;
+  bottom: 0;
+}
+#file-picker {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  background-color: #ddd;
+}
+
+#buttons, #file-picker {
+}

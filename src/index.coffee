@@ -15,13 +15,14 @@ window.potzy = potzy = new class
   init: =>
     $("play").addEventListener 'click', @play, false
     $("pause").addEventListener 'click', @pause, false
-    @editor = CodeMirror document.body,
+    @editor = CodeMirror document.getElementById("editor"),
       mode: "javascript"
       value: """
         function dsp(t) {
           return Math.sin(2 * Math.PI * t * 440);
         }
         """
+    @editor.setSize("100%", "100%")
     @editor.on "change", @import
     @import()
     @editor.focus()

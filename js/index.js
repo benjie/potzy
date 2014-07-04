@@ -34,10 +34,11 @@
       var cb, e, _i, _len, _ref;
       $("play").addEventListener('click', this.play, false);
       $("pause").addEventListener('click', this.pause, false);
-      this.editor = CodeMirror(document.body, {
+      this.editor = CodeMirror(document.getElementById("editor"), {
         mode: "javascript",
         value: "function dsp(t) {\n  return Math.sin(2 * Math.PI * t * 440);\n}"
       });
+      this.editor.setSize("100%", "100%");
       this.editor.on("change", this["import"]);
       this["import"]();
       this.editor.focus();
