@@ -1,18 +1,35 @@
 context = null
 node = null
+sampleRate = null
 sampleDuration = null
 t = 0
 volume = 0.1
 bufferSize = 4096
 
-window.potzy = new class
+$ = (id) ->
+  document.getElementById(id)
+
+window.potzy = potzy = new class
   constructor: ->
     @readyCallbacks = []
   init: =>
+    $("play").addEventListener 'click', @play, false
+    $("pause").addEventListener 'click', @pause, false
+    @editor = CodeMirror document.body,
+      mode: "javascript"
+      value: """
+        function dsp(t) {
+          return Math.sin(2 * Math.PI * t * 440);
+        }
+        """
+    @editor.on "change", @import
+    @import()
+    @editor.focus()
     try
       window.AudioContext ?= window.webkitAudioContext
       context = new AudioContext()
-      sampleDuration = 1 / context.sampleRate
+      sampleRate = context.sampleRate
+      sampleDuration = 1 / sampleRate
       node = context.createScriptProcessor(bufferSize, 1, 1)
       node.loop = false
       node.onaudioprocess = (e) =>
@@ -27,14 +44,37 @@ window.potzy = new class
       @ready = false
       alert 'Web Audio API is not supported in this browser'
 
-  play: ->
+  import: =>
+    js = @editor.getValue()
+    try
+      str = """
+        (function() {
+          var sampleRate = #{sampleRate};
+          #{js}
+          return dsp;
+        })()
+        """
+      fn = eval str
+      fn(0) # Test
+      fn(1) # Test
+      fn(100.499) # Test
+      @_fn = fn
+    catch e
+      console.error e
+
+  play: =>
     node.connect(context.destination)
 
-  pause: ->
+  pause: =>
     node.disconnect()
 
+  _fn: -> 0
+
   fn: (t) ->
-    return Math.sin(2 * Math.PI * t * 440)
+    try
+      return @_fn(t)
+    catch e
+      return 0
 
   onReady: (fn) ->
     if @ready
