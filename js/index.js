@@ -30,10 +30,19 @@
       this["import"] = __bind(this["import"], this);
       this.init = __bind(this.init, this);
       this.readyCallbacks = [];
+      this._state = {};
     }
 
     _Class.prototype.setState = function(state) {
+      var k, v, _ref, _results;
       this.state = state;
+      _ref = this.state;
+      _results = [];
+      for (k in _ref) {
+        v = _ref[k];
+        _results.push(this._state[k] = v);
+      }
+      return _results;
     };
 
     _Class.prototype.init = function() {
@@ -145,7 +154,7 @@
     _Class.prototype.fn = function(t) {
       var e;
       try {
-        return this._fn.call(this.state, t);
+        return this._fn.call(this._state, t);
       } catch (_error) {
         e = _error;
         return 0;

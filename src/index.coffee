@@ -31,8 +31,10 @@ $ = (id) ->
 window.potzy = potzy = new class
   constructor: ->
     @readyCallbacks = []
+    @_state = {}
 
   setState: (@state) ->
+    @_state[k] = v for k, v of @state
 
   init: =>
     fp = $("file-picker")
@@ -110,7 +112,7 @@ window.potzy = potzy = new class
 
   fn: (t) ->
     try
-      return @_fn.call(@state, t)
+      return @_fn.call(@_state, t)
     catch e
       return 0
 
