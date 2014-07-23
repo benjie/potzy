@@ -28,6 +28,10 @@ premade = [
 $ = (id) ->
   document.getElementById(id)
 
+ws = new WebSocket('ws://'+window.location.host)
+ws.onmessage = (e) ->
+  console.log e.data
+
 window.potzy = potzy = new class
   constructor: ->
     @readyCallbacks = []
