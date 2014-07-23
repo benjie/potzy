@@ -23,12 +23,6 @@
     return document.getElementById(id);
   };
 
-  ws = new WebSocket('ws://' + window.location.host);
-
-  ws.onmessage = function(e) {
-    return console.log(e.data);
-  };
-
   window.potzy = potzy = new ((function() {
     function _Class() {
       this.pause = __bind(this.pause, this);
@@ -37,6 +31,10 @@
       this.init = __bind(this.init, this);
       this.readyCallbacks = [];
     }
+
+    _Class.prototype.setState = function(state) {
+      this.state = state;
+    };
 
     _Class.prototype.init = function() {
       var cb, e, file, fp, _fn, _i, _j, _len, _len1, _ref;
@@ -147,7 +145,7 @@
     _Class.prototype.fn = function(t) {
       var e;
       try {
-        return this._fn(t);
+        return this._fn.call(this.state, t);
       } catch (_error) {
         e = _error;
         return 0;
@@ -167,5 +165,15 @@
   })());
 
   window.addEventListener('load', window.potzy.init, false);
+
+  ws = new WebSocket('ws://' + window.location.host);
+
+  ws.onmessage = function(e) {
+    var state;
+    try {
+      state = JSON.parse(e.data);
+      return potzy.setState(state);
+    } catch (_error) {}
+  };
 
 }).call(this);

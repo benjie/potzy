@@ -28,13 +28,11 @@ premade = [
 $ = (id) ->
   document.getElementById(id)
 
-ws = new WebSocket('ws://'+window.location.host)
-ws.onmessage = (e) ->
-  console.log e.data
-
 window.potzy = potzy = new class
   constructor: ->
     @readyCallbacks = []
+
+  setState: (@state) ->
 
   init: =>
     fp = $("file-picker")
@@ -112,7 +110,7 @@ window.potzy = potzy = new class
 
   fn: (t) ->
     try
-      return @_fn(t)
+      return @_fn.call(@state, t)
     catch e
       return 0
 
@@ -123,3 +121,9 @@ window.potzy = potzy = new class
       @readyCallbacks.push fn
 
 window.addEventListener 'load', window.potzy.init, false
+
+ws = new WebSocket('ws://'+window.location.host)
+ws.onmessage = (e) ->
+  try
+    state = JSON.parse e.data
+    potzy.setState state
