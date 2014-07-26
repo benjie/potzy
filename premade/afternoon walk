@@ -32,7 +32,13 @@ var bassline = [
 var counter;
 
 function dsp(t) {
-  counter = Math.floor(t/spb); //How many beats have passed
+  // How many beats have elapsed?
+  if (!this.oldT) {
+    this.oldT = 0;
+  }
+  this.counter += (t - this.oldT)/spb;
+  this.oldT = t;
+  counter = Math.floor(this.counter);
 
   return sqr(t,melodies[Math.floor(counter/16)%4][counter%8],0.11)
   +      sqr(t,bassline[Math.floor(counter/16)%4][counter%8],0.11) ; //Changes note every 8beat, alter chord every 16 beats
