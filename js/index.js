@@ -61,18 +61,6 @@
       };
 
       _Class.prototype.setState = function(state) {
-        var k, v, _ref, _results;
-        this.state = state;
-        _ref = this.state;
-        _results = [];
-        for (k in _ref) {
-          v = _ref[k];
-          _results.push(this._state[k] = v);
-        }
-        return _results;
-      };
-
-      _Class.prototype.setState2 = function(state) {
         var k, v;
         for (k in state) {
           v = state[k];
@@ -137,7 +125,7 @@
               output = e.outputBuffer.getChannelData(0);
               _results = [];
               for (i = _j = 0, _ref = output.length; 0 <= _ref ? _j < _ref : _j > _ref; i = 0 <= _ref ? ++_j : --_j) {
-                t += sampleDuration;
+                t += sampleDuration * _this._state.TIME;
                 _results.push(output[i] = volume * _this.fn(t));
               }
               return _results;
@@ -187,7 +175,7 @@
         js = this.editor.getValue().replace(/@([A-Za-z0-9]+)/gm, 'this.$1', 'gm');
         messagesContainer = document.getElementById('messages');
         try {
-          str = "(function() {\n  function everything(t) {\n    var sampleRate = " + sampleRate + ";\n    var P0 = this.P0;\n    var P1 = this.P1;\n    var P2 = this.P2;\n    var P3 = this.P3;\n    var P4 = this.P4;\n    var L0 = this.L0;\n    " + js + "\n    return dsp.call(this, t);\n  }\n  return everything;\n})()";
+          str = "(function() {\n  var sampleRate = " + sampleRate + ";\n  var P0 = this.P0;\n  var P1 = this.P1;\n  var P2 = this.P2;\n  var P3 = this.P3;\n  var P4 = this.P4;\n  var L0 = this.L0;\n  " + js + "\n  return dsp;\n})()";
           fn = eval(str);
           fn.call(this._state, 0);
           fn.call(this._state, 1);

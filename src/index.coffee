@@ -53,10 +53,7 @@ unless window.potzy?
       return oldVal unless Math.abs(oldVal - newVal) > 0.1
       return parseFloat(newVal.toFixed(1))
 
-    setState: (@state) ->
-      @_state[k] = v for k, v of @state
-
-    setState2: (state) ->
+    setState: (state) ->
       @_state[k] = @state[k] = @smooth(v, @state[k]) for k, v of state
       @_state.TIME = @state.TIME = @superSmooth(Math.sqrt(0.25 + @_state.P4 * 3.75), @state.TIME)
       if @_state.VOL?
@@ -100,7 +97,7 @@ unless window.potzy?
         node.onaudioprocess = (e) =>
           output = e.outputBuffer.getChannelData(0)
           for i in [0...output.length]
-            t += sampleDuration; #* @_state.TIME
+            t += sampleDuration * @_state.TIME
             output[i] = volume * @fn(t)
         @ready = true
         cb() for cb in @readyCallbacks
@@ -138,18 +135,15 @@ unless window.potzy?
       try
         str = """
           (function() {
-            function everything(t) {
-              var sampleRate = #{sampleRate};
-              var P0 = this.P0;
-              var P1 = this.P1;
-              var P2 = this.P2;
-              var P3 = this.P3;
-              var P4 = this.P4;
-              var L0 = this.L0;
-              #{js}
-              return dsp.call(this, t);
-            }
-            return everything;
+            var sampleRate = #{sampleRate};
+            var P0 = this.P0;
+            var P1 = this.P1;
+            var P2 = this.P2;
+            var P3 = this.P3;
+            var P4 = this.P4;
+            var L0 = this.L0;
+            #{js}
+            return dsp;
           })()
           """
         fn = eval str
