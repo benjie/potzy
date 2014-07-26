@@ -44,6 +44,7 @@ unless window.potzy?
         li = document.createElement 'li'
         li.textContent = file
         li.onclick = => @load(file)
+        li.ondblclick = => @load(file, true)
         list.appendChild li
       fp.appendChild list
       $("play").addEventListener 'click', @play, false
@@ -58,6 +59,8 @@ unless window.potzy?
       @editor.setSize("100%", "100%")
       @editor.on "change", @import
       @import()
+      if localStorage.getItem('_current')?
+        @load(localStorage.getItem('_current'))
       @editor.focus()
       try
         window.AudioContext ?= window.webkitAudioContext
@@ -78,14 +81,28 @@ unless window.potzy?
         @ready = false
         alert 'Web Audio API is not supported in this browser'
 
-    load: (file) ->
-      xhr = new XMLHttpRequest
-      xhr.onreadystatechange = =>
-        if xhr.readyState is 4
-          @editor.setValue(xhr.responseText)
-          @import()
-      xhr.open 'GET', "premade/#{file}", true
-      xhr.send null
+    load: (file, force) ->
+      @currentFile = file
+      localStorage.setItem('_current', file)
+      if force and confirm("Delete local modifications to '#{file}'?")
+        localStorage.removeItem(file)
+
+      if !localStorage.getItem(file)? and file in premade
+        xhr = new XMLHttpRequest
+        xhr.onreadystatechange = =>
+          if xhr.readyState is 4
+            @editor.setValue(xhr.responseText)
+            @import()
+        xhr.open 'GET', "premade/#{file}", true
+        xhr.send null
+      else
+        @editor.setValue(localStorage.getItem(file) ? """
+          function dsp(t) {
+            return Math.sin(2 * Math.PI * t * 440);
+          }
+          """
+        )
+        @import()
 
     import: =>
       js = @editor.getValue().replace /@([A-Za-z0-9]+)/gm, 'this.$1', 'gm'
@@ -104,6 +121,7 @@ unless window.potzy?
         fn(100.499) # Test
         messagesContainer.classList.remove 'error'
         messagesContainer.innerHTML = 'OK!'
+        localStorage.setItem(@currentFile, js)
         @_fn = fn
       catch e
         console.error e
