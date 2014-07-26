@@ -204,6 +204,7 @@ filter.set_q(0.66);
 filter.set_hpf(.0007);
 
 function dsp(t){
+  bpm = 125 * 2 * this.P0;
   clock(t);
 
   filter.set_fc(0.001 + ((lfo.play(2.66) * 0.16 + 1) / 2) * (0.258 + lfo2.play(.02) * 0.12)) ;
