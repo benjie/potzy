@@ -1,9 +1,9 @@
 var TAU = 2 * Math.PI;
 
 function dsp(t) {
-  var lfo1 = Math.sin(TAU * t * P0 * 10);
-  var lfo2 = Math.sin(TAU * t * P0 * 0.5);
-  return 0.5 * (0.5 + 0.25 * lfo1) * (P1 * sq(t, 440, lfo2) + P2 * sq(t, 1760, 1 - (lfo2 * 0.3) * P3));
+  var lfo1 = Math.sin(TAU * t * this.P0 * 10);
+  var lfo2 = Math.sin(TAU * t * this.P0 * 0.5);
+  return 0.5 * (0.5 + 0.25 * lfo1) * (this.P1 * sq(t, 440, lfo2) + this.P2 * sq(t, 1760, 0.5 - ((lfo2 * 0.3) * P3)));
 
 }
 
@@ -16,4 +16,3 @@ function sin(t, f) {
 function sq(t, f, pw) {
   return Math.sin(t * TAU * f) > pw ? 1 : -1;
 }
-
