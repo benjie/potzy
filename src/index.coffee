@@ -35,7 +35,7 @@ unless window.potzy?
       @_state = {}
 
     setState: (@state) ->
-      @_state[k] = v for k, v of @state
+      @_state[k] = parseFloat(v.toFixed(2)) for k, v of @state
       if @_state.VOL?
         volume = Math.min(1, Math.max(0, parseFloat(@_state.VOL)))
       return

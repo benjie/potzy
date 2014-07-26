@@ -32,7 +32,7 @@
         _ref = this.state;
         for (k in _ref) {
           v = _ref[k];
-          this._state[k] = v;
+          this._state[k] = parseFloat(v.toFixed(2));
         }
         if (this._state.VOL != null) {
           volume = Math.min(1, Math.max(0, parseFloat(this._state.VOL)));
