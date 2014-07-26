@@ -33,9 +33,15 @@ unless window.potzy?
     constructor: ->
       @readyCallbacks = []
       @_state = {}
+      @state = {}
 
-    setState: (@state) ->
-      @_state[k] = @state[k] = parseFloat(v.toFixed(2)) for k, v of @state
+    smooth: (newVal, oldVal) ->
+      return newVal unless oldVal?
+      oldRatio = 3
+      return (oldRatio * oldVal + newVal)/(1 + oldRatio)
+
+    setState: (state) ->
+      @_state[k] = @state[k] = @smooth(v, @state[k]) for k, v of state
       @_state.TIME = @state.TIME = Math.sqrt(0.25 + @_state.P4 * 3.75)
       if @_state.VOL?
         volume = Math.min(1, Math.max(0, parseFloat(@_state.VOL)))
