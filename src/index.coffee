@@ -32,17 +32,33 @@ unless window.potzy?
   window.potzy = potzy = new class
     constructor: ->
       @readyCallbacks = []
+      @state =
+        L0: 0
+        P0: 0
+        P1: 0
+        P2: 0
+        P3: 0
+        P4: 0
+        VOL: 0
       @_state = {}
-      @state = {}
+      @_state[k] = v for k, v of @state
 
     smooth: (newVal, oldVal) ->
       return newVal unless oldVal?
       oldRatio = 3
       return (oldRatio * oldVal + newVal)/(1 + oldRatio)
 
-    setState: (state) ->
+    superSmooth: (newVal, oldVal) ->
+      return newVal unless oldVal?
+      return oldVal unless Math.abs(oldVal - newVal) > 0.1
+      return parseFloat(newVal.toFixed(1))
+
+    setState: (@state) ->
+      @_state[k] = v for k, v of @state
+
+    setState2: (state) ->
       @_state[k] = @state[k] = @smooth(v, @state[k]) for k, v of state
-      @_state.TIME = @state.TIME = Math.sqrt(0.25 + @_state.P4 * 3.75)
+      @_state.TIME = @state.TIME = @superSmooth(Math.sqrt(0.25 + @_state.P4 * 3.75), @state.TIME)
       if @_state.VOL?
         volume = Math.min(1, Math.max(0, parseFloat(@_state.VOL)))
       return
@@ -84,7 +100,7 @@ unless window.potzy?
         node.onaudioprocess = (e) =>
           output = e.outputBuffer.getChannelData(0)
           for i in [0...output.length]
-            t += sampleDuration * @_state.TIME
+            t += sampleDuration; #* @_state.TIME
             output[i] = volume * @fn(t)
         @ready = true
         cb() for cb in @readyCallbacks
@@ -122,7 +138,7 @@ unless window.potzy?
       try
         str = """
           (function() {
-            function everything() {
+            function everything(t) {
               var sampleRate = #{sampleRate};
               var P0 = this.P0;
               var P1 = this.P1;
@@ -131,15 +147,15 @@ unless window.potzy?
               var P4 = this.P4;
               var L0 = this.L0;
               #{js}
-              return dsp;
+              return dsp.call(this, t);
             }
             return everything;
           })()
           """
         fn = eval str
-        fn(0) # Test
-        fn(1) # Test
-        fn(100.499) # Test
+        fn.call(@_state, 0) # Test
+        fn.call(@_state, 1) # Test
+        fn.call(@_state, 100.499) # Test
         messagesContainer.classList.remove 'error'
         messagesContainer.innerHTML = 'OK!'
         localStorage.setItem(@currentFile, js)
@@ -159,7 +175,7 @@ unless window.potzy?
 
     fn: (t) ->
       try
-        return @_fn.call(@_state).call(@_state, t)
+        return @_fn.call(@_state, t)
       catch e
         return 0
 

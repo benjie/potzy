@@ -22,9 +22,23 @@
         this.play = __bind(this.play, this);
         this["import"] = __bind(this["import"], this);
         this.init = __bind(this.init, this);
+        var k, v, _ref;
         this.readyCallbacks = [];
+        this.state = {
+          L0: 0,
+          P0: 0,
+          P1: 0,
+          P2: 0,
+          P3: 0,
+          P4: 0,
+          VOL: 0
+        };
         this._state = {};
-        this.state = {};
+        _ref = this.state;
+        for (k in _ref) {
+          v = _ref[k];
+          this._state[k] = v;
+        }
       }
 
       _Class.prototype.smooth = function(newVal, oldVal) {
@@ -36,13 +50,35 @@
         return (oldRatio * oldVal + newVal) / (1 + oldRatio);
       };
 
+      _Class.prototype.superSmooth = function(newVal, oldVal) {
+        if (oldVal == null) {
+          return newVal;
+        }
+        if (!(Math.abs(oldVal - newVal) > 0.1)) {
+          return oldVal;
+        }
+        return parseFloat(newVal.toFixed(1));
+      };
+
       _Class.prototype.setState = function(state) {
+        var k, v, _ref, _results;
+        this.state = state;
+        _ref = this.state;
+        _results = [];
+        for (k in _ref) {
+          v = _ref[k];
+          _results.push(this._state[k] = v);
+        }
+        return _results;
+      };
+
+      _Class.prototype.setState2 = function(state) {
         var k, v;
         for (k in state) {
           v = state[k];
           this._state[k] = this.state[k] = this.smooth(v, this.state[k]);
         }
-        this._state.TIME = this.state.TIME = Math.sqrt(0.25 + this._state.P4 * 3.75);
+        this._state.TIME = this.state.TIME = this.superSmooth(Math.sqrt(0.25 + this._state.P4 * 3.75), this.state.TIME);
         if (this._state.VOL != null) {
           volume = Math.min(1, Math.max(0, parseFloat(this._state.VOL)));
         }
@@ -101,7 +137,7 @@
               output = e.outputBuffer.getChannelData(0);
               _results = [];
               for (i = _j = 0, _ref = output.length; 0 <= _ref ? _j < _ref : _j > _ref; i = 0 <= _ref ? ++_j : --_j) {
-                t += sampleDuration * _this._state.TIME;
+                t += sampleDuration;
                 _results.push(output[i] = volume * _this.fn(t));
               }
               return _results;
@@ -151,11 +187,11 @@
         js = this.editor.getValue().replace(/@([A-Za-z0-9]+)/gm, 'this.$1', 'gm');
         messagesContainer = document.getElementById('messages');
         try {
-          str = "(function() {\n  function everything() {\n    var sampleRate = " + sampleRate + ";\n    var P0 = this.P0;\n    var P1 = this.P1;\n    var P2 = this.P2;\n    var P3 = this.P3;\n    var P4 = this.P4;\n    var L0 = this.L0;\n    " + js + "\n    return dsp;\n  }\n  return everything;\n})()";
+          str = "(function() {\n  function everything(t) {\n    var sampleRate = " + sampleRate + ";\n    var P0 = this.P0;\n    var P1 = this.P1;\n    var P2 = this.P2;\n    var P3 = this.P3;\n    var P4 = this.P4;\n    var L0 = this.L0;\n    " + js + "\n    return dsp.call(this, t);\n  }\n  return everything;\n})()";
           fn = eval(str);
-          fn(0);
-          fn(1);
-          fn(100.499);
+          fn.call(this._state, 0);
+          fn.call(this._state, 1);
+          fn.call(this._state, 100.499);
           messagesContainer.classList.remove('error');
           messagesContainer.innerHTML = 'OK!';
           localStorage.setItem(this.currentFile, js);
@@ -183,7 +219,7 @@
       _Class.prototype.fn = function(t) {
         var e;
         try {
-          return this._fn.call(this._state).call(this._state, t);
+          return this._fn.call(this._state, t);
         } catch (_error) {
           e = _error;
           return 0;
