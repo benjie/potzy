@@ -56,8 +56,8 @@ espruino.open (err) ->
     P2: 1 - analogRead(C3)
     P3: 1 - analogRead(C2)
     P4: 1 - analogRead(C1)
-    P5: 1 - analogRead(C0)
-    L0: 1 - analogRead(A3)
+    VOL: 1 - analogRead(C0)
+    L0: analogRead(A3)
 
   sig = getState.toString()
   sig = sig.replace /^function ?/, "function getState"
