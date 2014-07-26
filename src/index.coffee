@@ -20,6 +20,7 @@ unless window.potzy?
     "on the verge tech mix"
     "polytropon"
     "polytropon astral mix"
+    "pwm and stuff"
     "simple sine"
     "subwah"
     "unexpected token"
@@ -33,13 +34,13 @@ unless window.potzy?
     constructor: ->
       @readyCallbacks = []
       @state =
-        L0: 0
-        P0: 0
-        P1: 0
-        P2: 0
-        P3: 0
-        P4: 0
-        VOL: 0
+        L0: 0.5
+        P0: 0.5
+        P1: 0.5
+        P2: 0.5
+        P3: 0.5
+        P4: 0.5
+        VOL: 0.5
       @_state = {}
       @_state[k] = v for k, v of @state
 
@@ -50,7 +51,7 @@ unless window.potzy?
 
     superSmooth: (newVal, oldVal) ->
       return newVal unless oldVal?
-      return oldVal unless Math.abs(oldVal - newVal) > 0.1
+      return oldVal unless Math.abs(oldVal - newVal) > 0.02
       return parseFloat(newVal.toFixed(1))
 
     setState: (state) ->
@@ -81,11 +82,11 @@ unless window.potzy?
           """
       @editor.setSize("100%", "100%")
       @editor.on "change", @import
-      @import()
       if localStorage.getItem('_current')?
         @load(localStorage.getItem('_current'))
       else
         @load "basic"
+      @import()
       @editor.focus()
       try
         window.AudioContext ?= window.webkitAudioContext
@@ -160,6 +161,7 @@ unless window.potzy?
         messagesContainer.innerHTML = 'Error: ' + e.message
 
     play: =>
+      @import()
       node.connect(context.destination)
 
     pause: =>

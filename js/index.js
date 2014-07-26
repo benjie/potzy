@@ -12,7 +12,7 @@
     t = 0;
     volume = 0.1;
     bufferSize = 4096;
-    premade = ["afternoon walk", "early morning", "got some 303", "icecream", "late morning", "mind swift", "morning", "need more 303", "on the verge", "on the verge tech mix", "polytropon", "polytropon astral mix", "simple sine", "subwah", "unexpected token", "yay"];
+    premade = ["afternoon walk", "early morning", "got some 303", "icecream", "late morning", "mind swift", "morning", "need more 303", "on the verge", "on the verge tech mix", "polytropon", "polytropon astral mix", "pwm and stuff", "simple sine", "subwah", "unexpected token", "yay"];
     $ = function(id) {
       return document.getElementById(id);
     };
@@ -25,13 +25,13 @@
         var k, v, _ref;
         this.readyCallbacks = [];
         this.state = {
-          L0: 0,
-          P0: 0,
-          P1: 0,
-          P2: 0,
-          P3: 0,
-          P4: 0,
-          VOL: 0
+          L0: 0.5,
+          P0: 0.5,
+          P1: 0.5,
+          P2: 0.5,
+          P3: 0.5,
+          P4: 0.5,
+          VOL: 0.5
         };
         this._state = {};
         _ref = this.state;
@@ -54,7 +54,7 @@
         if (oldVal == null) {
           return newVal;
         }
-        if (!(Math.abs(oldVal - newVal) > 0.1)) {
+        if (!(Math.abs(oldVal - newVal) > 0.02)) {
           return oldVal;
         }
         return parseFloat(newVal.toFixed(1));
@@ -103,12 +103,12 @@
         });
         this.editor.setSize("100%", "100%");
         this.editor.on("change", this["import"]);
-        this["import"]();
         if (localStorage.getItem('_current') != null) {
           this.load(localStorage.getItem('_current'));
         } else {
           this.load("basic");
         }
+        this["import"]();
         this.editor.focus();
         try {
           if (window.AudioContext == null) {
@@ -193,6 +193,7 @@
       };
 
       _Class.prototype.play = function() {
+        this["import"]();
         return node.connect(context.destination);
       };
 
