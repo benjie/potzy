@@ -38,11 +38,13 @@ window.potzy = potzy = new class
 
   init: =>
     fp = $("file-picker")
+    list = document.createElement 'ul'
     for file in premade then do (file) =>
-      div = document.createElement "div"
-      div.textContent = file
-      div.onclick = => @load(file)
-      fp.appendChild div
+      li = document.createElement 'li'
+      li.textContent = file
+      li.onclick = => @load(file)
+      list.appendChild li
+    fp.appendChild list
     $("play").addEventListener 'click', @play, false
     $("pause").addEventListener 'click', @pause, false
     @editor = CodeMirror document.getElementById("editor"),
@@ -85,7 +87,8 @@ window.potzy = potzy = new class
     xhr.send null
 
   import: =>
-    js = @editor.getValue()
+    js = @editor.getValue().replace /@([A-Za-z0-9]+)/gm, 'this.$1', 'gm'
+    messagesContainer = document.getElementById 'messages'
     try
       str = """
         (function() {
@@ -98,9 +101,13 @@ window.potzy = potzy = new class
       fn(0) # Test
       fn(1) # Test
       fn(100.499) # Test
+      messagesContainer.classList.remove 'error'
+      messagesContainer.innerHTML = 'OK!'
       @_fn = fn
     catch e
       console.error e
+      messagesContainer.classList.add 'error'
+      messagesContainer.innerHTML = 'Error: ' + e.message
 
   play: =>
     node.connect(context.destination)
@@ -122,10 +129,24 @@ window.potzy = potzy = new class
     else
       @readyCallbacks.push fn
 
+updateValueStatusBar = (state) ->
+  headings = []
+  values = []
+  headingsContainer = document.getElementById 'vars-names'
+  valuesContainer = document.getElementById 'vars-values'
+
+  for key, value of state
+    headings.push "<th>@#{key}</th>"
+    values.push "<td>#{Math.round(value * 1000) / 1000}</td>"
+
+  headingsContainer.innerHTML = headings.join ''
+  valuesContainer.innerHTML = values.join ''
+
 window.addEventListener 'load', window.potzy.init, false
 
 ws = new WebSocket('ws://'+window.location.host)
 ws.onmessage = (e) ->
   try
     state = JSON.parse e.data
+    window.requestAnimationFrame -> updateValueStatusBar(state)
     potzy.setState state

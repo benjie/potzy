@@ -1,25 +1,116 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
 #buttons {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 50px;
+  height: 40px;
   background-color: #ccc;
+  padding: 10px;
 }
+
+#buttons button {
+  font-size: 11px;
+}
+
 #editor {
   position: absolute;
-  top: 50px;
+  top: 40px;
   left: 0;
-  right: 200px;
-  bottom: 0;
+  right: 230px;
+  bottom: 67px;
 }
+
+#messages {
+  position: absolute;
+  bottom: 28px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  color: #0C0;
+  background: #111;
+}
+
+#messages.error {
+  color: #F00;
+}
+
 #file-picker {
   position: absolute;
-  top: 50px;
+  top: 40px;
   right: 0;
-  bottom: 0;
-  width: 200px;
+  bottom: 40px;
+  width: 230px;
   background-color: #ddd;
+  padding: 10px;
+}
+
+#file-picker ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+#file-picker li {
+  padding: 5px;
+  background-color: #e5e5e5;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+
+#file-picker li:hover {
+  box-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+#file-picker li:nth-child(odd) {
+  background-color: #f5f5f5;
+}
+
+
+#vars {
+  position: absolute;
+  bottom: 0;
+  padding: 0 10px;
+  width: 100%;
+  left: 0;
+  line-height: 1;
+  background-color: #111;
+  color: #0F0;
+  height: 28px;
+}
+
+#vars table {
+  padding: 0;
+  margin: 0;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+#vars th, #vars td {
+  text-align: left;
+  font-size: 10px;
+  font-family: monospace;
+  color: #ccc;
+  min-width: 50px;
+}
+
+#vars th {
+  font-weight: bold;
+}
+
+#vars td {
+  color: #FFF;
 }
 
 #buttons, #file-picker {
