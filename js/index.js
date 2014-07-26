@@ -24,15 +24,23 @@
         this.init = __bind(this.init, this);
         this.readyCallbacks = [];
         this._state = {};
+        this.state = {};
       }
 
+      _Class.prototype.smooth = function(newVal, oldVal) {
+        var oldRatio;
+        if (oldVal == null) {
+          return newVal;
+        }
+        oldRatio = 3;
+        return (oldRatio * oldVal + newVal) / (1 + oldRatio);
+      };
+
       _Class.prototype.setState = function(state) {
-        var k, v, _ref;
-        this.state = state;
-        _ref = this.state;
-        for (k in _ref) {
-          v = _ref[k];
-          this._state[k] = this.state[k] = parseFloat(v.toFixed(2));
+        var k, v;
+        for (k in state) {
+          v = state[k];
+          this._state[k] = this.state[k] = this.smooth(v, this.state[k]);
         }
         this._state.TIME = this.state.TIME = Math.sqrt(0.25 + this._state.P4 * 3.75);
         if (this._state.VOL != null) {
