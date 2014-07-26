@@ -36,6 +36,9 @@ function dsp(t) {
   if (!this.oldT) {
     this.oldT = 0;
   }
+  if (!this.counter) {
+    this.counter = 0;
+  }
   this.counter += (t - this.oldT)/spb;
   this.oldT = t;
   counter = Math.floor(this.counter);
