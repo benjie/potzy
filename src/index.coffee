@@ -129,6 +129,10 @@ window.potzy = potzy = new class
     else
       @readyCallbacks.push fn
 
+formatValue = (input) ->
+  roundedStr = (Math.round(input * 100) / 100) + ''
+  return roundedStr + "0.00".substr(roundedStr.length)
+
 updateValueStatusBar = (state) ->
   headings = []
   values = []
@@ -137,8 +141,8 @@ updateValueStatusBar = (state) ->
 
   for key, value of state
     headings.push "<th>@#{key}</th>"
-    values.push "<td>#{Math.round(value * 1000) / 1000}</td>"
-
+    #values.push "<td>#{Math.round(value * 1000) / 1000}</td>"
+    values.push "<td>#{formatValue(value)}</td>"
   headingsContainer.innerHTML = headings.join ''
   valuesContainer.innerHTML = values.join ''
 
