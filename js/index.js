@@ -32,8 +32,9 @@
         _ref = this.state;
         for (k in _ref) {
           v = _ref[k];
-          this._state[k] = parseFloat(v.toFixed(2));
+          this._state[k] = this.state[k] = parseFloat(v.toFixed(2));
         }
+        this._state.TIME = this.state.TIME = Math.sqrt(0.25 + this._state.P4 * 3.75);
         if (this._state.VOL != null) {
           volume = Math.min(1, Math.max(0, parseFloat(this._state.VOL)));
         }
@@ -92,7 +93,7 @@
               output = e.outputBuffer.getChannelData(0);
               _results = [];
               for (i = _j = 0, _ref = output.length; 0 <= _ref ? _j < _ref : _j > _ref; i = 0 <= _ref ? ++_j : --_j) {
-                t += sampleDuration * Math.sqrt(0.25 + (_this._state.P4 * 3.75));
+                t += sampleDuration * _this._state.TIME;
                 _results.push(output[i] = volume * _this.fn(t));
               }
               return _results;
@@ -217,10 +218,10 @@
       var state;
       try {
         state = JSON.parse(e.data);
-        window.requestAnimationFrame(function() {
-          return updateValueStatusBar(state);
+        potzy.setState(state);
+        return window.requestAnimationFrame(function() {
+          return updateValueStatusBar(potzy.state);
         });
-        return potzy.setState(state);
       } catch (_error) {}
     };
   }

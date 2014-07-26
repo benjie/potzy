@@ -35,7 +35,8 @@ unless window.potzy?
       @_state = {}
 
     setState: (@state) ->
-      @_state[k] = parseFloat(v.toFixed(2)) for k, v of @state
+      @_state[k] = @state[k] = parseFloat(v.toFixed(2)) for k, v of @state
+      @_state.TIME = @state.TIME = Math.sqrt(0.25 + @_state.P4 * 3.75)
       if @_state.VOL?
         volume = Math.min(1, Math.max(0, parseFloat(@_state.VOL)))
       return
@@ -77,7 +78,7 @@ unless window.potzy?
         node.onaudioprocess = (e) =>
           output = e.outputBuffer.getChannelData(0)
           for i in [0...output.length]
-            t += sampleDuration * Math.sqrt(0.25 + (@_state.P4 * 3.75))
+            t += sampleDuration * @_state.TIME
             output[i] = volume * @fn(t)
         @ready = true
         cb() for cb in @readyCallbacks
@@ -185,5 +186,5 @@ unless window.potzy?
   ws.onmessage = (e) ->
     try
       state = JSON.parse e.data
-      window.requestAnimationFrame -> updateValueStatusBar(state)
       potzy.setState state
+      window.requestAnimationFrame -> updateValueStatusBar(potzy.state)
