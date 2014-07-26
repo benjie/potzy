@@ -142,7 +142,7 @@
         js = this.editor.getValue().replace(/@([A-Za-z0-9]+)/gm, 'this.$1', 'gm');
         messagesContainer = document.getElementById('messages');
         try {
-          str = "(function() {\n  var sampleRate = " + sampleRate + ";\n  " + js + "\n  return dsp;\n})()";
+          str = "(function() {\n  function everything() {\n    var sampleRate = " + sampleRate + ";\n    var P0 = this.P0;\n    var P1 = this.P1;\n    var P2 = this.P2;\n    var P3 = this.P3;\n    var P4 = this.P4;\n    var L0 = this.L0;\n    " + js + "\n    return dsp;\n  }\n  return everything;\n})()";
           fn = eval(str);
           fn(0);
           fn(1);
@@ -174,7 +174,7 @@
       _Class.prototype.fn = function(t) {
         var e;
         try {
-          return this._fn.call(this._state, t);
+          return this._fn.call(this._state).call(this._state, t);
         } catch (_error) {
           e = _error;
           return 0;

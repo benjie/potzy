@@ -115,9 +115,18 @@ unless window.potzy?
       try
         str = """
           (function() {
-            var sampleRate = #{sampleRate};
-            #{js}
-            return dsp;
+            function everything() {
+              var sampleRate = #{sampleRate};
+              var P0 = this.P0;
+              var P1 = this.P1;
+              var P2 = this.P2;
+              var P3 = this.P3;
+              var P4 = this.P4;
+              var L0 = this.L0;
+              #{js}
+              return dsp;
+            }
+            return everything;
           })()
           """
         fn = eval str
@@ -143,7 +152,7 @@ unless window.potzy?
 
     fn: (t) ->
       try
-        return @_fn.call(@_state, t)
+        return @_fn.call(@_state).call(@_state, t)
       catch e
         return 0
 
