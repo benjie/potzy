@@ -7,7 +7,7 @@
  */
 
 var transpose = 2;
-var bpm = 240; // Beats per minute
+var bpm = 240 * 3 * this.P0; // Beats per minute
 var spb = 60/bpm; // Second per beat
 
 function note(n, octave){
