@@ -155,6 +155,7 @@ var osc = Oscillator('tri', 512);
 var hat_osc = Oscillator('ramp', 512);
 
 function dsp(t){
+  bpm = 125 * 2 * this.P0;
   clock(t);
 
   var noise = Noise();
