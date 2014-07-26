@@ -77,7 +77,7 @@ unless window.potzy?
         node.onaudioprocess = (e) =>
           output = e.outputBuffer.getChannelData(0)
           for i in [0...output.length]
-            t += sampleDuration
+            t += sampleDuration * Math.sqrt(0.25 + (@_state.P4 * 3.75))
             output[i] = volume * @fn(t)
         @ready = true
         cb() for cb in @readyCallbacks

@@ -92,7 +92,7 @@
               output = e.outputBuffer.getChannelData(0);
               _results = [];
               for (i = _j = 0, _ref = output.length; 0 <= _ref ? _j < _ref : _j > _ref; i = 0 <= _ref ? ++_j : --_j) {
-                t += sampleDuration;
+                t += sampleDuration * Math.sqrt(0.25 + (_this._state.P4 * 3.75));
                 _results.push(output[i] = volume * _this.fn(t));
               }
               return _results;
