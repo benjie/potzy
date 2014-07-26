@@ -27,15 +27,16 @@
       }
 
       _Class.prototype.setState = function(state) {
-        var k, v, _ref, _results;
+        var k, v, _ref;
         this.state = state;
         _ref = this.state;
-        _results = [];
         for (k in _ref) {
           v = _ref[k];
-          _results.push(this._state[k] = v);
+          this._state[k] = v;
         }
-        return _results;
+        if (this._state.VOL != null) {
+          volume = Math.min(1, Math.max(0, parseFloat(this._state.VOL)));
+        }
       };
 
       _Class.prototype.init = function() {

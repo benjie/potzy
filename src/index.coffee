@@ -36,6 +36,9 @@ unless window.potzy?
 
     setState: (@state) ->
       @_state[k] = v for k, v of @state
+      if @_state.VOL?
+        volume = Math.min(1, Math.max(0, parseFloat(@_state.VOL)))
+      return
 
     init: =>
       fp = $("file-picker")
