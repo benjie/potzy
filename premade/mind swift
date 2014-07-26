@@ -232,6 +232,7 @@ filter.set_q(0.78);
 filter.set_hpf(.0011);
 
 function dsp(t){
+  bpm = 125 * this.P0 * 2;
   clock(t);
 
   var noise = Noise();
