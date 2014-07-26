@@ -47,7 +47,7 @@ start = ->
 
   server.listen 1337
 
-espruino = Espruino.espruino comPort: '/dev/tty.usbmodemfa1351'
+espruino = Espruino.espruino comPort: process.env.TTY
 espruino.open (err) ->
   throw err if err?
   getState = ->
