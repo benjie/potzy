@@ -46,13 +46,15 @@ unless window.potzy?
 
     smooth: (newVal, oldVal) ->
       return newVal unless oldVal?
-      oldRatio = 3
-      return (oldRatio * oldVal + newVal)/(1 + oldRatio)
+      oldRatio = 1
+      newVal = (oldRatio * oldVal + newVal)/(1 + oldRatio)
+      return oldVal unless Math.abs(oldVal - newVal) >= 0.01
+      return newVal
 
     superSmooth: (newVal, oldVal) ->
       return newVal unless oldVal?
-      return oldVal unless Math.abs(oldVal - newVal) > 0.02
-      return parseFloat(newVal.toFixed(1))
+      return oldVal unless Math.abs(oldVal - newVal) >= 0.02
+      return parseFloat(newVal.toFixed(2))
 
     setState: (state) ->
       @_state[k] = @state[k] = @smooth(v, @state[k]) for k, v of state

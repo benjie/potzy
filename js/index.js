@@ -46,18 +46,22 @@
         if (oldVal == null) {
           return newVal;
         }
-        oldRatio = 3;
-        return (oldRatio * oldVal + newVal) / (1 + oldRatio);
+        oldRatio = 1;
+        newVal = (oldRatio * oldVal + newVal) / (1 + oldRatio);
+        if (!(Math.abs(oldVal - newVal) >= 0.01)) {
+          return oldVal;
+        }
+        return newVal;
       };
 
       _Class.prototype.superSmooth = function(newVal, oldVal) {
         if (oldVal == null) {
           return newVal;
         }
-        if (!(Math.abs(oldVal - newVal) > 0.02)) {
+        if (!(Math.abs(oldVal - newVal) >= 0.02)) {
           return oldVal;
         }
-        return parseFloat(newVal.toFixed(1));
+        return parseFloat(newVal.toFixed(2));
       };
 
       _Class.prototype.setState = function(state) {
