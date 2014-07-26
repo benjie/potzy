@@ -51,7 +51,14 @@ espruino = Espruino.espruino comPort: process.env.TTY
 espruino.open (err) ->
   throw err if err?
   getState = ->
-    A1: analogRead(A1)
+    P0: analogRead(A1)
+    P1: analogRead(A0)
+    P2: analogRead(C3)
+    P3: analogRead(C2)
+    P4: analogRead(C1)
+    P5: analogRead(C0)
+    L0: analogRead(A3)
+
   sig = getState.toString()
   sig = sig.replace /^function ?/, "function getState"
   espruino.command sig, start
