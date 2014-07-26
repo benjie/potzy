@@ -72,6 +72,8 @@
         this["import"]();
         if (localStorage.getItem('_current') != null) {
           this.load(localStorage.getItem('_current'));
+        } else {
+          this.load("basic");
         }
         this.editor.focus();
         try {

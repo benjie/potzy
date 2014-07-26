@@ -61,6 +61,8 @@ unless window.potzy?
       @import()
       if localStorage.getItem('_current')?
         @load(localStorage.getItem('_current'))
+      else
+        @load "basic"
       @editor.focus()
       try
         window.AudioContext ?= window.webkitAudioContext
