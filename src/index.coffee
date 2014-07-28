@@ -33,7 +33,9 @@ unless window.potzy?
   window.potzy = potzy = new class
     constructor: ->
       @readyCallbacks = []
-      @state =
+      @state = {}
+      @_state = {}
+      @setState
         L0: 0.5
         P0: 0.5
         P1: 0.5
@@ -41,8 +43,6 @@ unless window.potzy?
         P3: 0.5
         P4: 0.5
         VOL: 0.5
-      @_state = {}
-      @_state[k] = v for k, v of @state
 
     smooth: (newVal, oldVal) ->
       return newVal unless oldVal?
@@ -90,6 +90,7 @@ unless window.potzy?
         @load "basic"
       @import()
       @editor.focus()
+      @updateValueStatusBar()
       try
         window.AudioContext ?= window.webkitAudioContext
         context = new AudioContext()
@@ -183,28 +184,29 @@ unless window.potzy?
       else
         @readyCallbacks.push fn
 
+    updateValueStatusBar: =>
+      headings = []
+      values = []
+      headingsContainer = document.getElementById 'vars-names'
+      valuesContainer = document.getElementById 'vars-values'
+
+      for key, value of @state
+        headings.push "<th>@#{key}</th>"
+        #values.push "<td>#{Math.round(value * 1000) / 1000}</td>"
+        values.push "<td>#{formatValue(value)}</td>"
+      headingsContainer.innerHTML = headings.join ''
+      valuesContainer.innerHTML = values.join ''
+      window.requestAnimationFrame @updateValueStatusBar
+
   formatValue = (input) ->
     roundedStr = (Math.round(input * 100) / 100) + ''
     return roundedStr + "0.00".substr(roundedStr.length)
 
-  updateValueStatusBar = (state) ->
-    headings = []
-    values = []
-    headingsContainer = document.getElementById 'vars-names'
-    valuesContainer = document.getElementById 'vars-values'
-
-    for key, value of state
-      headings.push "<th>@#{key}</th>"
-      #values.push "<td>#{Math.round(value * 1000) / 1000}</td>"
-      values.push "<td>#{formatValue(value)}</td>"
-    headingsContainer.innerHTML = headings.join ''
-    valuesContainer.innerHTML = values.join ''
-
   window.addEventListener 'load', window.potzy.init, false
 
-  ws = new WebSocket('ws://'+window.location.host)
-  ws.onmessage = (e) ->
-    try
-      state = JSON.parse e.data
-      potzy.setState state
-      window.requestAnimationFrame -> updateValueStatusBar(potzy.state)
+  try
+    ws = new WebSocket('ws://'+window.location.host)
+    ws.onmessage = (e) ->
+      try
+        state = JSON.parse e.data
+        potzy.setState state
