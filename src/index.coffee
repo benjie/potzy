@@ -68,6 +68,10 @@ unless window.potzy?
       return
 
     init: =>
+      @headingsContainer = document.getElementById 'vars-names'
+      @valuesContainer = document.getElementById 'vars-values'
+      @headingsContainer.addEventListener 'mousewheel', @mouseWheel, false
+      @valuesContainer.addEventListener 'mousewheel', @mouseWheel, false
       fp = $("file-picker")
       list = document.createElement 'ul'
       for file in premade then do (file) =>
@@ -191,16 +195,25 @@ unless window.potzy?
     updateValueStatusBar: =>
       headings = []
       values = []
-      headingsContainer = document.getElementById 'vars-names'
-      valuesContainer = document.getElementById 'vars-values'
 
       for key, value of @state
-        headings.push "<th>@#{key}</th>"
+        headings.push "<th data-key=\"#{key}\">@#{key}</th>"
         #values.push "<td>#{Math.round(value * 1000) / 1000}</td>"
-        values.push "<td>#{formatValue(value)}</td>"
-      headingsContainer.innerHTML = headings.join ''
-      valuesContainer.innerHTML = values.join ''
+        values.push "<td data-key=\"#{key}\">#{formatValue(value)}</td>"
+      @headingsContainer.innerHTML = headings.join ''
+      @valuesContainer.innerHTML = values.join ''
       window.requestAnimationFrame @updateValueStatusBar
+
+    mouseWheel: (e) =>
+      e.preventDefault()
+      key = e.target.getAttribute("data-key")
+      if key
+        v = @state[key]
+        if v
+          obj = {}
+          obj[key] = parseFloat(v) - (e.wheelDelta / 100)
+          @setState obj
+      return false
 
   formatValue = (input) ->
     roundedStr = (Math.round(input * 100) / 100) + ''

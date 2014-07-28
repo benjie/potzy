@@ -18,6 +18,7 @@
     };
     window.potzy = potzy = new ((function() {
       function _Class() {
+        this.mouseWheel = __bind(this.mouseWheel, this);
         this.updateValueStatusBar = __bind(this.updateValueStatusBar, this);
         this.pause = __bind(this.pause, this);
         this.play = __bind(this.play, this);
@@ -78,6 +79,10 @@
 
       _Class.prototype.init = function() {
         var cb, e, file, fp, list, _fn, _i, _j, _len, _len1, _ref;
+        this.headingsContainer = document.getElementById('vars-names');
+        this.valuesContainer = document.getElementById('vars-values');
+        this.headingsContainer.addEventListener('mousewheel', this.mouseWheel, false);
+        this.valuesContainer.addEventListener('mousewheel', this.mouseWheel, false);
         fp = $("file-picker");
         list = document.createElement('ul');
         _fn = (function(_this) {
@@ -229,20 +234,33 @@
       };
 
       _Class.prototype.updateValueStatusBar = function() {
-        var headings, headingsContainer, key, value, values, valuesContainer, _ref;
+        var headings, key, value, values, _ref;
         headings = [];
         values = [];
-        headingsContainer = document.getElementById('vars-names');
-        valuesContainer = document.getElementById('vars-values');
         _ref = this.state;
         for (key in _ref) {
           value = _ref[key];
-          headings.push("<th>@" + key + "</th>");
-          values.push("<td>" + (formatValue(value)) + "</td>");
+          headings.push("<th data-key=\"" + key + "\">@" + key + "</th>");
+          values.push("<td data-key=\"" + key + "\">" + (formatValue(value)) + "</td>");
         }
-        headingsContainer.innerHTML = headings.join('');
-        valuesContainer.innerHTML = values.join('');
+        this.headingsContainer.innerHTML = headings.join('');
+        this.valuesContainer.innerHTML = values.join('');
         return window.requestAnimationFrame(this.updateValueStatusBar);
+      };
+
+      _Class.prototype.mouseWheel = function(e) {
+        var key, obj, v;
+        e.preventDefault();
+        key = e.target.getAttribute("data-key");
+        if (key) {
+          v = this.state[key];
+          if (v) {
+            obj = {};
+            obj[key] = parseFloat(v) - (e.wheelDelta / 100);
+            this.setState(obj);
+          }
+        }
+        return false;
       };
 
       return _Class;
