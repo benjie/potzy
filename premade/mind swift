@@ -255,9 +255,9 @@ function dsp(t){
     * arp(1/16, hat_osc.play(hat_note) + noise * 1.4, 18, 70);
 
   return 0.8 * (
-    0.67 * synth
+    @P1 * synth
   + kick
-  + 0.12 * hat
-  + 0.25 * bass
+  + @P2 * hat
+  + @P3 * bass
   );
 }
