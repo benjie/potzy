@@ -50,6 +50,9 @@ start = ->
 espruino = Espruino.espruino comPort: process.env.TTY
 espruino.open (err) ->
   throw err if err?
+  setup = ->
+    pinMode(C6, 'input_pullup')
+    return true
   getState = ->
     P0: 1 - analogRead(A1)
     P1: 1 - analogRead(A0)
@@ -58,7 +61,8 @@ espruino.open (err) ->
     P4: 1 - analogRead(C1)
     VOL: 1 - analogRead(C0)
     L0: analogRead(A3)
+    C6: digitalRead(C6)
 
   sig = getState.toString()
   sig = sig.replace /^function ?/, "function getState"
-  espruino.command sig, start
+  espruino.command "#{setup.toString().replace(/^function ?/, "function setup")}; setup();#{sig}", start

@@ -35,7 +35,8 @@
           P3: 0.5,
           P4: 0.5,
           TIME: 1,
-          VOL: 0.3
+          VOL: 0.3,
+          C6: 1
         });
       }
 
@@ -68,8 +69,10 @@
           v = state[k];
           if (k === 'TIME') {
             this._state[k] = this.state[k] = this.superSmooth(v, this.state[k]);
-          } else {
+          } else if (k[0] !== 'C') {
             this._state[k] = this.state[k] = this.smooth(v, this.state[k]);
+          } else {
+            this._state[k] = this.state[k] = v;
           }
         }
         if (this._state.VOL != null) {
@@ -278,7 +281,7 @@
         var state;
         try {
           state = JSON.parse(e.data);
-          state.TIME = Math.sqrt(0.25 + state.P4 * 3.75);
+          state.TIME = (state.C6 * 2 - 1) * Math.sqrt(0.25 + state.P4 * 3.75);
           return potzy.setState(state);
         } catch (_error) {}
       };

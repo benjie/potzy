@@ -44,6 +44,7 @@ unless window.potzy?
         P4: 0.5
         TIME: 1
         VOL: 0.3
+        C6: 1
 
     smooth: (newVal, oldVal) ->
       return newVal unless oldVal?
@@ -61,8 +62,10 @@ unless window.potzy?
       for k, v of state
         if k is 'TIME'
           @_state[k] = @state[k] = @superSmooth(v, @state[k])
-        else
+        else if k[0] isnt 'C'
           @_state[k] = @state[k] = @smooth(v, @state[k])
+        else
+          @_state[k] = @state[k] = v
       if @_state.VOL?
         volume = Math.min(1, Math.max(0, parseFloat(@_state.VOL)))
       return
@@ -226,5 +229,5 @@ unless window.potzy?
     ws.onmessage = (e) ->
       try
         state = JSON.parse e.data
-        state.TIME = Math.sqrt(0.25 + state.P4 * 3.75)
+        state.TIME = (state.C6 * 2 - 1) * Math.sqrt(0.25 + state.P4 * 3.75)
         potzy.setState state
