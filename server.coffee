@@ -4,7 +4,8 @@ WebSocket = require 'ws'
 WebSocketServer = WebSocket.Server
 Espruino = require 'node-espruino'
 
-start = ->
+start = (o) ->
+  console.log "Starting #{o}"
   if err?
     console.dir err
     process.exit 1
@@ -46,9 +47,11 @@ start = ->
   wss.on 'connection', device.addWebsocket
 
   server.listen 1337
+  console.log "Listening"
 
 espruino = Espruino.espruino comPort: process.env.TTY
 espruino.open (err) ->
+  console.log "OPEN"
   throw err if err?
   setup = ->
     pinMode(C6, 'input_pullup')
