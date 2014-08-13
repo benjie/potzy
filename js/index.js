@@ -9,7 +9,7 @@
     node = null;
     sampleRate = null;
     sampleDuration = null;
-    t = 0;
+    t = 2 * 60 * 60;
     volume = 0.1;
     bufferSize = 4096;
     premade = ["afternoon walk", "early morning", "got some 303", "icecream", "late morning", "mind swift", "morning", "need more 303", "on the verge", "on the verge tech mix", "polytropon", "polytropon astral mix", "pwm and stuff", "simple sine", "subwah", "unexpected token", "yay"];

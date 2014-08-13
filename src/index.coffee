@@ -3,7 +3,7 @@ unless window.potzy?
   node = null
   sampleRate = null
   sampleDuration = null
-  t = 0
+  t = 2*60*60
   volume = 0.1
   bufferSize = 4096
 
