@@ -1,0 +1,68 @@
+function note(freq) {
+  return function dsp(t) {
+    return 0.1 * Math.sin(2 * Math.PI * t * freq);
+  };
+}
+const c = note(261.63);
+const d = note(293.66);
+const e = note(329.63);
+const f = note(349.23);
+const g = note(392);
+const a = note(440);
+const b = note(493.88);
+
+function rest(t) {
+  return 0;
+}
+
+const tune = [
+  c,
+  e,
+  f,
+  g,
+  g,
+  g,
+  rest,
+  c,
+  e,
+  f,
+  g,
+  g,
+  g,
+  rest,
+  c,
+  e,
+  f,
+  g,
+  e,
+  c,
+  e,
+  d,
+  d,
+  d,
+  e,
+  rest,
+  e,
+  d,
+  c,
+  c,
+  c,
+  e,
+  g,
+  rest,
+  g,
+  f,
+  e,
+  f,
+  g,
+  e,
+  c,
+  d,
+  c,
+];
+
+function dsp(t) {
+  const noteindex = Math.floor(t * 3);
+  const note = tune[noteindex % tune.length];
+  return note(t);
+}
